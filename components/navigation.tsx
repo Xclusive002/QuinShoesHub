@@ -46,18 +46,18 @@ export function Navigation() {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-70">
-            <img src="/images/logo.png" alt="Quinn Shoes Hub" className="h-12 w-auto" />
-            <span className="hidden font-display text-lg font-bold sm:inline">Quinn Shoes Hub</span>
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8">
+          <Link href="/" className="flex min-w-0 items-center gap-2 transition-opacity hover:opacity-70">
+            <img src="/images/logo.png" alt="Quinn Shoes Hub" className="h-10 w-auto sm:h-12" />
+            <span className="truncate font-display text-sm font-bold sm:text-lg">Quinn Shoes Hub</span>
           </Link>
 
-          <div className="flex items-center gap-4 sm:gap-6">
+          <div className="flex items-center gap-2 sm:gap-5">
             <a
               href="https://wa.me/2348062622541"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium transition-all hover:underline"
+              className="hidden text-sm font-medium transition-all hover:underline sm:inline"
             >
               HELP
             </a>
@@ -69,10 +69,10 @@ export function Navigation() {
                   setIsAuthOpen(true);
                 }
               }}
-              className="flex items-center gap-2 rounded-full border border-border bg-secondary px-3 py-2 text-sm font-medium transition hover:bg-muted"
+              className="flex items-center gap-2 rounded-full border border-border bg-secondary px-2.5 py-2 text-sm font-medium transition hover:bg-muted sm:px-3"
             >
               <UserCircle2 className="h-4 w-4" />
-              {memberProfile?.email ? 'Account' : 'Sign in'}
+              <span className="hidden sm:inline">{memberProfile?.email ? 'Account' : 'Sign in'}</span>
             </Link>
             <Link href="/cart" className="relative transition-opacity hover:opacity-70">
               <ShoppingCart className="h-5 w-5" />

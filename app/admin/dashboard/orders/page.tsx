@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ClipboardList } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 
 interface OrderRow {
   id: string;
@@ -67,7 +68,7 @@ export default function AdminOrdersPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4 text-sm text-muted-foreground">{order.shippingName ?? 'Guest'}</td>
-                <td className="px-6 py-4 text-sm font-medium">${Number(order.total).toFixed(2)}</td>
+                <td className="px-6 py-4 text-sm font-medium">{formatCurrency(Number(order.total))}</td>
                 <td className="px-6 py-4 text-sm">
                   <span className="px-2 py-1 rounded text-xs bg-secondary border border-border">{order.paymentStatus}</span>
                 </td>

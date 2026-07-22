@@ -17,11 +17,12 @@ export function ShopPageClient() {
   const [sortBy, setSortBy] = useState(searchParams.get('sortBy') || 'newest');
   const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState<Product[]>([]);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
     const loadProducts = () => {
-      fetch(`/api/products${category ? `?category=${encodeURIComponent(category)}` : ''}`)
+      fetch(`/api/products${category ? `?category=${encodeURIComponent(category)}` : ''}`, { cache: 'no-store' })
         .then((response) => response.json())
         .then((data) => {
           if (isMounted) {
@@ -35,19 +36,29 @@ export function ShopPageClient() {
         });
     };
 
-    loadProducts();
-
     const handleRefresh = () => {
       loadProducts();
     };
 
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadProducts();
+      }
+    };
+
+    loadProducts();
+
     window.addEventListener('quinn-products-updated', handleRefresh);
     window.addEventListener('quinn-notifications-updated', handleRefresh);
+    window.addEventListener('focus', handleRefresh);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       isMounted = false;
       window.removeEventListener('quinn-products-updated', handleRefresh);
       window.removeEventListener('quinn-notifications-updated', handleRefresh);
+      window.removeEventListener('focus', handleRefresh);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [category]);
 
@@ -105,14 +116,21 @@ export function ShopPageClient() {
             </aside>
 
             <div className="lg:col-span-3">
-              <div className="lg:hidden mb-8 flex items-center justify-between">
+              <div className="mb-8 flex items-center justify-between lg:hidden">
                 <p className="text-sm text-muted-foreground">{filteredAndSortedProducts.length} products</p>
-                <div className="relative">
-                  <button className="flex items-center gap-2 text-sm font-medium">
-                    Sort <ChevronDown className="w-4 h-4" />
-                  </button>
-                </div>
+                <button
+                  onClick={() => setShowMobileFilters((value) => !value)}
+                  className="flex items-center gap-2 rounded-full border border-border px-3 py-2 text-sm font-medium"
+                >
+                  Filters <ChevronDown className={`h-4 w-4 transition-transform ${showMobileFilters ? 'rotate-180' : ''}`} />
+                </button>
               </div>
+
+              {showMobileFilters && (
+                <div className="mb-8 lg:hidden">
+                  <Filters onFilterChange={handleFilterChange} />
+                </div>
+              )}
 
               {paginatedProducts.length > 0 ? (
                 <>

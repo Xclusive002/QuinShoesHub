@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Heart, Plus, Sparkles, Star } from 'lucide-react';
 import { AuthModal } from '@/components/auth-modal';
 import { getWishlist, readMemberProfile, saveWishlist } from '@/lib/member-account';
+import { formatCurrency } from '@/lib/utils';
 
 interface Product {
   id: string;
@@ -121,9 +122,9 @@ export function ProductCard({ product }: ProductCardProps) {
             <span className="text-xs text-muted-foreground">({product.rating.toFixed(1)} / 5)</span>
           </div>
 
-          <div className="flex items-center justify-between border-t border-border pt-3">
+          <div className="flex flex-col gap-3 border-t border-border pt-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="font-display text-xl font-bold">${product.price}</p>
+              <p className="font-display text-xl font-bold">{formatCurrency(product.price)}</p>
               <p className="text-xs text-muted-foreground">{product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}</p>
             </div>
             <button
@@ -131,7 +132,7 @@ export function ProductCard({ product }: ProductCardProps) {
                 event.preventDefault();
                 handleAction('cart');
               }}
-              className="inline-flex items-center gap-2 border border-border bg-foreground px-3 py-2 text-sm font-medium text-background transition hover:opacity-80"
+              className="inline-flex w-full items-center justify-center gap-2 border border-border bg-foreground px-3 py-2 text-sm font-medium text-background transition hover:opacity-80 sm:w-auto"
             >
               <Plus className="h-4 w-4" />
               {added ? 'Added' : 'Add'}

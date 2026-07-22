@@ -7,6 +7,7 @@ import { Footer } from '@/components/footer';
 import { AuthModal } from '@/components/auth-modal';
 import { ArrowRight, Minus, Plus, Trash2 } from 'lucide-react';
 import { createOrderFromCart, getOrders, readMemberProfile, saveOrders } from '@/lib/member-account';
+import { formatCurrency } from '@/lib/utils';
 
 interface CartItem {
   id: string;
@@ -48,7 +49,7 @@ export default function CartPage() {
   };
 
   const subtotal = useMemo(() => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0), [cartItems]);
-  const shipping = subtotal > 150 ? 0 : 15;
+  const shipping = subtotal > 150000 ? 0 : 15000;
   const total = subtotal + shipping;
 
   const handleCheckout = () => {
@@ -106,7 +107,7 @@ export default function CartPage() {
                       </div>
                       <div>
                         <h3 className="font-display text-lg font-bold">{item.name}</h3>
-                        <p className="text-sm text-muted-foreground">${item.price.toFixed(2)} each</p>
+                        <p className="text-sm text-muted-foreground">{formatCurrency(item.price)} each</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -115,7 +116,7 @@ export default function CartPage() {
                         <span className="w-6 text-center text-sm font-medium">{item.quantity}</span>
                         <button onClick={() => updateQuantity(item.id, 1)} className="p-1 transition hover:bg-secondary"><Plus className="h-4 w-4" /></button>
                       </div>
-                      <p className="text-sm font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="text-sm font-medium">{formatCurrency(item.price * item.quantity)}</p>
                       <button onClick={() => removeItem(item.id)} className="p-2 text-muted-foreground transition hover:bg-secondary"><Trash2 className="h-4 w-4" /></button>
                     </div>
                   </div>
@@ -125,16 +126,16 @@ export default function CartPage() {
               <aside className="h-fit border border-border bg-background p-8">
                 <h2 className="mb-6 font-display text-lg font-bold">Order summary</h2>
                 <div className="mb-6 space-y-4 border-b border-border pb-6 text-sm">
-                  <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span className="font-medium">${subtotal.toFixed(2)}</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Shipping</span><span className="font-medium">{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span className="font-medium">{formatCurrency(subtotal)}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Shipping</span><span className="font-medium">{shipping === 0 ? 'FREE' : formatCurrency(shipping)}</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Tax</span><span className="font-medium">Calculated at checkout</span></div>
                 </div>
-                <div className="mb-8 flex items-center justify-between font-display text-lg font-bold"><span>Total</span><span>${total.toFixed(2)}</span></div>
+                <div className="mb-8 flex items-center justify-between font-display text-lg font-bold"><span>Total</span><span>{formatCurrency(total)}</span></div>
                 <button onClick={handleCheckout} className="mb-4 w-full bg-foreground py-4 font-medium text-background transition hover:opacity-80">Proceed to checkout</button>
                 {checkoutNotice ? <p className="mb-4 text-sm text-foreground">{checkoutNotice}</p> : null}
                 <Link href="/shop" className="block w-full border border-border py-3 text-center font-medium transition hover:bg-secondary">Continue shopping</Link>
                 <div className="mt-8 space-y-3 text-xs text-muted-foreground">
-                  <p>✓ Free shipping on orders over $150</p>
+                  <p>✓ Free shipping on orders over ₦150,000</p>
                   <p>✓ Easy 30-day returns</p>
                   <p>✓ Secure checkout</p>
                 </div>

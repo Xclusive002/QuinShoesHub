@@ -159,6 +159,20 @@
   body {
     @apply bg-background text-foreground font-sans;
     background-image: radial-gradient(circle at top left, rgba(0,0,0,0.03), transparent 28%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  img {
+    display: block;
+    max-width: 100%;
+  }
+  button, input, select, textarea {
+    font: inherit;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-display font-bold tracking-tight;

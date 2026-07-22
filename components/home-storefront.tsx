@@ -101,29 +101,29 @@ export function HomeStorefront() {
           </section>
         )}
 
-        <section className="border-b border-border px-4 pb-20 pt-32 sm:px-6 lg:px-8">
+        <section className="border-b border-border px-4 pb-16 pt-24 sm:px-6 sm:pb-20 sm:pt-32 lg:px-8">
           <div className="mx-auto max-w-7xl">
-            <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
               <div className="max-w-2xl">
                 <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">
                   Premium Quality Since Day One
                 </p>
-                <h1 className="mb-6 font-display text-5xl leading-[0.95] sm:text-6xl lg:text-7xl">
+                <h1 className="mb-6 font-display text-4xl leading-[0.95] sm:text-5xl lg:text-7xl">
                   Elevate your everyday walk with signature style.
                 </h1>
-                <p className="mb-8 text-lg leading-relaxed text-muted-foreground">
+                <p className="mb-8 text-base leading-relaxed text-muted-foreground sm:text-lg">
                   Discover refined footwear crafted for comfort, confidence, and timeless presence — from clean daily essentials to standout occasion pieces.
                 </p>
-                <div className="flex flex-wrap gap-4">
-                  <Link href="/shop" className="inline-flex items-center gap-2 bg-foreground px-8 py-3 font-medium text-background transition hover:opacity-80">
+                <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <Link href="/shop" className="inline-flex items-center justify-center gap-2 bg-foreground px-6 py-3 font-medium text-background transition hover:opacity-80 sm:px-8">
                     Shop now <ArrowRight className="h-4 w-4" />
                   </Link>
-                  <Link href="#featured" className="inline-flex items-center gap-2 border border-foreground px-8 py-3 font-medium text-foreground transition hover:bg-foreground hover:text-background">
+                  <Link href="#featured" className="inline-flex items-center justify-center gap-2 border border-foreground px-6 py-3 font-medium text-foreground transition hover:bg-foreground hover:text-background sm:px-8">
                     Explore the edit
                   </Link>
                 </div>
                 <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                  {['Free shipping over $150', '30-day returns', 'Members get early access'].map((item) => (
+                  {['Free shipping over ₦150,000', '30-day returns', 'Members get early access'].map((item) => (
                     <div key={item} className="rounded-2xl border border-border bg-secondary/70 px-4 py-3 text-sm text-muted-foreground">
                       {item}
                     </div>
@@ -131,14 +131,14 @@ export function HomeStorefront() {
                 </div>
               </div>
 
-              <div className="relative overflow-hidden rounded-[2rem] border border-border bg-secondary/70 p-6 shadow-[0_30px_80px_-28px_rgba(0,0,0,0.25)]">
+              <div className="relative overflow-hidden rounded-[2rem] border border-border bg-secondary/70 p-4 shadow-[0_30px_80px_-28px_rgba(0,0,0,0.25)] sm:p-6">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.55),_transparent_65%)]" />
                 <div className="relative">
                   <div className="mb-6 flex items-center justify-between rounded-full border border-border bg-background/70 px-4 py-2 text-sm font-medium text-muted-foreground">
                     <span className="flex items-center gap-2"><Warehouse className="h-4 w-4" /> Curated studio drops</span>
                     <span>New in</span>
                   </div>
-                  <img src="/images/logo.png" alt="Quinn Shoes Hub" className="mx-auto h-72 w-full max-w-md object-contain" />
+                  <img src="/images/logo.png" alt="Quinn Shoes Hub" className="mx-auto h-56 w-full max-w-md object-contain sm:h-72" />
                   <div className="mt-6 grid gap-3 sm:grid-cols-2">
                     {benefits.map((benefit) => {
                       const Icon = benefit.icon;
@@ -159,7 +159,7 @@ export function HomeStorefront() {
 
         <section className="border-b border-border px-4 py-12 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
-            <div className="grid gap-4 md:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
               {categories.map((category) => (
                 <Link key={category.id} href={`/shop?category=${category.slug}`} className="flex items-center justify-center rounded-2xl border border-border bg-secondary px-4 py-5 text-center text-sm font-medium transition hover:bg-muted">
                   {category.name}
@@ -171,7 +171,7 @@ export function HomeStorefront() {
 
         <section id="featured" className="px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
-            <div className="mb-12 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mb-8 flex flex-col gap-3 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="mb-2 text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Curated selection</p>
                 <h2 className="font-display text-4xl sm:text-5xl">Featured essentials</h2>
@@ -182,7 +182,7 @@ export function HomeStorefront() {
             </div>
 
             {featuredProducts.length > 0 ? (
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
                 {featuredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}

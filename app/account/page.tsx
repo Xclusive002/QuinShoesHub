@@ -8,6 +8,7 @@ import { AuthModal } from '@/components/auth-modal';
 import { supabase } from '@/lib/supabase';
 import { clearMemberProfile, getOrders, getTrackingSteps, getWishlist, readMemberProfile, saveMemberProfile, saveOrders, saveWishlist, type MemberProfile, type OrderRecord, type WishlistItem } from '@/lib/member-account';
 import { Edit3, Heart, Package, UserCircle2 } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 
 export default function AccountPage() {
   const [profile, setProfile] = useState<MemberProfile | null>(null);
@@ -178,7 +179,7 @@ export default function AccountPage() {
                 </div>
                 <div className="flex items-center justify-between rounded-2xl border border-border bg-secondary/70 px-4 py-3">
                   <span>Total spent</span>
-                  <span className="font-semibold text-foreground">${totalSpend.toFixed(2)}</span>
+                  <span className="font-semibold text-foreground">{formatCurrency(totalSpend)}</span>
                 </div>
               </div>
             </div>
@@ -222,14 +223,14 @@ export default function AccountPage() {
                           <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-xs font-semibold">{item.quantity}x</div>
                           <div>
                             <p className="text-sm font-medium text-foreground">{item.name}</p>
-                            <p className="text-xs text-muted-foreground">${item.price.toFixed(2)}</p>
+                            <p className="text-xs text-muted-foreground">{formatCurrency(item.price)}</p>
                           </div>
                         </div>
                       ))}
                     </div>
                     <div className="mt-6 flex items-center justify-between border-t border-border pt-4 text-sm text-muted-foreground">
                       <span>Total</span>
-                      <span className="font-semibold text-foreground">${order.total.toFixed(2)}</span>
+                      <span className="font-semibold text-foreground">{formatCurrency(order.total)}</span>
                     </div>
                   </div>
                 ))}

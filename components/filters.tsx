@@ -31,7 +31,7 @@ export function Filters({ onFilterChange }: FiltersProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 rounded-2xl border border-border bg-background/95 p-4 shadow-sm md:border-0 md:bg-transparent md:p-0 md:shadow-none">
       {/* Sort */}
       <div className="border-b border-border pb-6">
         <div className="relative">
@@ -96,10 +96,10 @@ export function Filters({ onFilterChange }: FiltersProps) {
         <h3 className="font-display font-bold text-sm mb-4">PRICE RANGE</h3>
         <div className="space-y-3">
           {[
-            { label: 'Under $100', min: 0, max: 100 },
-            { label: '$100 - $200', min: 100, max: 200 },
-            { label: '$200 - $350', min: 200, max: 350 },
-            { label: 'Over $350', min: 350, max: 10000 },
+            { label: 'Under ₦100,000', min: 0, max: 100000 },
+            { label: '₦100,000 - ₦200,000', min: 100000, max: 200000 },
+            { label: '₦200,000 - ₦350,000', min: 200000, max: 350000 },
+            { label: 'Over ₦350,000', min: 350000, max: 10000000 },
           ].map((range) => (
             <label key={range.label} className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" className="w-4 h-4" />

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Edit2, Trash2, Plus } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 
 interface CategoryOption {
   id: string;
@@ -263,7 +264,7 @@ export default function AdminProductsPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4 text-sm capitalize text-muted-foreground">{product.category?.name ?? 'Uncategorized'}</td>
-                <td className="px-6 py-4 text-sm font-medium">${product.price}</td>
+                <td className="px-6 py-4 text-sm font-medium">{formatCurrency(product.price)}</td>
                 <td className="px-6 py-4 text-sm">
                   <span className={`px-2 py-1 rounded text-xs ${product.stock > 30 ? 'bg-green-100 text-green-700' : product.stock > 10 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>
                     {product.stock}
@@ -302,13 +303,13 @@ export default function AdminProductsPage() {
         <div>
           <p className="text-muted-foreground text-sm">Total Value</p>
           <p className="text-3xl font-display font-bold">
-            ${filteredProducts.reduce((sum, product) => sum + product.price * product.stock, 0).toLocaleString()}
+            {formatCurrency(filteredProducts.reduce((sum, product) => sum + product.price * product.stock, 0))}
           </p>
         </div>
         <div>
           <p className="text-muted-foreground text-sm">Average Price</p>
           <p className="text-3xl font-display font-bold">
-            ${Math.round(filteredProducts.reduce((sum, product) => sum + product.price, 0) / filteredProducts.length)}
+            {formatCurrency(Math.round(filteredProducts.reduce((sum, product) => sum + product.price, 0) / filteredProducts.length))}
           </p>
         </div>
       </div>

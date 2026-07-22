@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
@@ -60,7 +62,11 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
 export async function DELETE(_request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params;
+
+    await prisma.wishlistItem.deleteMany({ where: { productId: params.id } });
+    await prisma.orderItem.deleteMany({ where: { productId: params.id } });
     await prisma.product.delete({ where: { id: params.id } });
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     const params = await context.params;

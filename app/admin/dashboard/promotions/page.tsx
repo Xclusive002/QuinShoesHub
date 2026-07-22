@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { TicketPercent } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 
 interface PromoRow {
   id: string;
@@ -61,7 +62,7 @@ export default function AdminPromotionsPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4 text-sm">{promo.type}</td>
-                <td className="px-6 py-4 text-sm font-medium">{promo.type === 'PERCENTAGE' ? `${promo.value}%` : `$${promo.value}`}</td>
+                <td className="px-6 py-4 text-sm font-medium">{promo.type === 'PERCENTAGE' ? `${promo.value}%` : formatCurrency(promo.value)}</td>
                 <td className="px-6 py-4 text-sm">
                   <span className="px-2 py-1 rounded text-xs bg-secondary border border-border">{promo.status}</span>
                 </td>

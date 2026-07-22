@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ShoppingBag, Package, BarChart3, TrendingUp } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 
 interface ProductSummary {
   id: string;
@@ -60,13 +61,13 @@ export default function AdminDashboard() {
     },
     {
       label: 'Total Inventory Value',
-      value: `$${totalValue.toLocaleString()}`,
+      value: formatCurrency(totalValue),
       icon: BarChart3,
       color: 'bg-black',
     },
     {
       label: 'Average Price',
-      value: `$${avgPrice}`,
+      value: formatCurrency(avgPrice),
       icon: TrendingUp,
       color: 'bg-gray-800',
     },
@@ -123,13 +124,13 @@ export default function AdminDashboard() {
                   <tr key={product.id} className="border-b border-border hover:bg-secondary transition-colors">
                     <td className="px-6 py-4 text-sm font-medium">{product.name}</td>
                     <td className="px-6 py-4 text-sm text-muted-foreground capitalize">{product.category?.name ?? 'Uncategorized'}</td>
-                    <td className="px-6 py-4 text-sm font-medium">${product.price}</td>
+                    <td className="px-6 py-4 text-sm font-medium">{formatCurrency(product.price)}</td>
                     <td className="px-6 py-4 text-sm">
                       <span className={`px-2 py-1 rounded ${product.stock > 30 ? 'bg-green-100 text-green-700' : product.stock > 10 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>
                         {product.stock}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm font-medium">${(product.price * product.stock).toLocaleString()}</td>
+                    <td className="px-6 py-4 text-sm font-medium">{formatCurrency(product.price * product.stock)}</td>
                   </tr>
                 ))}
             </tbody>

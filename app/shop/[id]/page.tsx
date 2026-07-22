@@ -8,6 +8,7 @@ import { ProductCard } from '@/components/product-card';
 import { AuthModal } from '@/components/auth-modal';
 import { ChevronLeft, Star, Minus, Plus, Heart, ShieldCheck } from 'lucide-react';
 import { getWishlist, readMemberProfile, saveWishlist } from '@/lib/member-account';
+import { formatCurrency } from '@/lib/utils';
 
 interface Product {
   id: string;
@@ -39,30 +40,44 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   useEffect(() => {
     let isMounted = true;
 
-    fetch(`/api/products/${resolvedParams.id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (!isMounted) return;
-        setProduct(data.product ?? null);
-      })
-      .catch(() => {
-        if (!isMounted) return;
-        setProduct(null);
-      });
+    const refreshProductData = () => {
+      fetch(`/api/products/${resolvedParams.id}`, { cache: 'no-store' })
+        .then((response) => response.json())
+        .then((data) => {
+          if (!isMounted) return;
+          setProduct(data.product ?? null);
+        })
+        .catch(() => {
+          if (!isMounted) return;
+          setProduct(null);
+        });
 
-    fetch('/api/products')
-      .then((response) => response.json())
-      .then((data) => {
-        if (!isMounted) return;
-        setRelatedProducts((data.products ?? []).slice(0, 4));
-      })
-      .catch(() => {
-        if (!isMounted) return;
-        setRelatedProducts([]);
-      });
+      fetch('/api/products', { cache: 'no-store' })
+        .then((response) => response.json())
+        .then((data) => {
+          if (!isMounted) return;
+          setRelatedProducts((data.products ?? []).slice(0, 4));
+        })
+        .catch(() => {
+          if (!isMounted) return;
+          setRelatedProducts([]);
+        });
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        refreshProductData();
+      }
+    };
+
+    refreshProductData();
+    window.addEventListener('focus', refreshProductData);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       isMounted = false;
+      window.removeEventListener('focus', refreshProductData);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [resolvedParams.id]);
 
@@ -176,7 +191,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   <span className="text-sm text-muted-foreground">({Math.floor(Math.random() * 100) + 10} reviews)</span>
                 </div>
 
-                <p className="mb-6 text-4xl font-display font-bold">${product.price}</p>
+                <p className="mb-6 text-4xl font-display font-bold">{formatCurrency(product.price)}</p>
                 <p className="text-lg leading-relaxed text-muted-foreground">{product.description}</p>
               </div>
 
@@ -233,7 +248,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               <div className="mt-8 space-y-3 text-sm text-muted-foreground">
-                <p>✓ Free shipping on orders over $150</p>
+                <p>✓ Free shipping on orders over ₦150,000</p>
                 <p>✓ 30-day returns</p>
                 <p>✓ 2-year quality guarantee</p>
                 <p>✓ Contact: +234 806 262 2541 (WhatsApp)</p>
