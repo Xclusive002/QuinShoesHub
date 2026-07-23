@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { Prisma, ProductStatus } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+import { fallbackStore } from '@/lib/fallback-store';
 
 function toProductShape(product: any) {
   return {
@@ -64,6 +65,8 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('Public products fetch failed', error);
-    return NextResponse.json({ products: [], categories: [] });
+    const products = fallbackStore.getProducts(search, categorySlug).map(toProductShape);
+    const categories = fallbackStore.getCategories().map(toCategoryShape);
+    return NextResponse.json({ products, categories });
   }
 }

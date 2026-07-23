@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { ProductStatus } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+import { fallbackStore } from '@/lib/fallback-store';
 
 function toProductShape(product: any) {
   return {
@@ -37,6 +38,11 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
 
     return NextResponse.json({ product: toProductShape(product) });
   } catch (error) {
-    return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    const params = await context.params;
+    const product = fallbackStore.getProductById(params.id);
+    if (!product) {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    }
+    return NextResponse.json({ product: toProductShape(product) });
   }
 }

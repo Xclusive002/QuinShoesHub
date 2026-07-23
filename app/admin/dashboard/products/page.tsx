@@ -104,21 +104,6 @@ export default function AdminProductsPage() {
     setFormError(null);
     setShowAddForm(true);
   };
-    const productImages = Array.isArray(product.images) ? product.images.filter(Boolean) : [];
-    setEditingId(product.id);
-    setForm({
-      name: product.name,
-      description: product.description,
-      price: String(product.price),
-      stock: String(product.stock),
-      categoryId: product.categoryId ?? '',
-      sku: '',
-      status: product.status ?? 'PUBLISHED',
-    });
-    setImageUrls(productImages);
-    setMainImageIndex(0);
-    setShowAddForm(true);
-  };
 
   const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);

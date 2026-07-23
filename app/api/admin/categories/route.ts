@@ -26,10 +26,16 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const data = categorySchema.parse(body);
+  const body = await request.json();
+  let data;
 
+  try {
+    data = categorySchema.parse(body);
+  } catch (error) {
+    return NextResponse.json({ error: 'Invalid category payload' }, { status: 400 });
+  }
+
+  try {
     const category = await prisma.category.create({
       data: {
         name: data.name,
@@ -43,13 +49,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ category }, { status: 201 });
   } catch (error) {
+    console.error('Failed to create category', error);
     const category = fallbackStore.createCategory({
-      name: 'Fallback category',
-      slug: 'fallback-category',
-      description: 'Created in fallback mode',
-      image: null,
-      parentId: null,
-      sortOrder: 0,
+      name: data.name,
+      slug: data.slug,
+      description: data.description ?? null,
+      image: data.image ?? null,
+      parentId: data.parentId ?? null,
+      sortOrder: data.sortOrder ?? 0,
     });
 
     return NextResponse.json({ category }, { status: 201 });

@@ -13,11 +13,17 @@ const categorySchema = z.object({
 });
 
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
-  try {
-    const params = await context.params;
-    const body = await request.json();
-    const data = categorySchema.parse(body);
+  const params = await context.params;
+  const body = await request.json();
+  let data;
 
+  try {
+    data = categorySchema.parse(body);
+  } catch (error) {
+    return NextResponse.json({ error: 'Invalid category payload' }, { status: 400 });
+  }
+
+  try {
     const category = await prisma.category.update({
       where: { id: params.id },
       data: {
@@ -32,11 +38,14 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
 
     return NextResponse.json({ category });
   } catch (error) {
-    const params = await context.params;
+    console.error('Failed to update category', error);
     const category = fallbackStore.updateCategory(params.id, {
-      name: 'Fallback category',
-      slug: 'fallback-category',
-      description: 'Fallback category',
+      ...(data.name !== undefined ? { name: data.name } : {}),
+      ...(data.slug !== undefined ? { slug: data.slug } : {}),
+      ...(data.description !== undefined ? { description: data.description ?? null } : {}),
+      ...(data.image !== undefined ? { image: data.image ?? null } : {}),
+      ...(data.parentId !== undefined ? { parentId: data.parentId ?? null } : {}),
+      ...(data.sortOrder !== undefined ? { sortOrder: data.sortOrder } : {}),
     });
 
     return NextResponse.json({ category });

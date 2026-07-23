@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { fallbackStore } from '@/lib/fallback-store';
 
 const productSchema = z.object({
   name: z.string().min(1),
@@ -27,15 +28,22 @@ export async function GET() {
     return NextResponse.json({ products });
   } catch (error) {
     console.error('Admin products fetch failed', error);
-    return NextResponse.json({ products: [] });
+    const products = fallbackStore.getProducts();
+    return NextResponse.json({ products });
   }
 }
 
 export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const data = productSchema.parse(body);
+  const body = await request.json();
+  let data;
 
+  try {
+    data = productSchema.parse(body);
+  } catch (error) {
+    return NextResponse.json({ error: 'Invalid product payload' }, { status: 400 });
+  }
+
+  try {
     const product = await prisma.product.create({
       data: {
         name: data.name,
@@ -57,6 +65,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ product }, { status: 201 });
   } catch (error) {
     console.error('Failed to create product', error);
-    return NextResponse.json({ error: 'Unable to create product' }, { status: 500 });
+    const category = data.categoryId ? fallbackStore.getCategories().find((item) => item.id === data.categoryId) : undefined;
+    const product = fallbackStore.createProduct({
+      name: data.name,
+      description: data.description,
+      price: data.price,
+      compareAtPrice: data.compareAtPrice,
+      categoryId: data.categoryId,
+      category: category ? { id: category.id, name: category.name, slug: category.slug } : undefined,
+      stock: data.stock,
+      sku: data.sku ?? null,
+      status: (data.status as any) ?? 'DRAFT',
+      sizes: data.sizes,
+      colors: data.colors,
+      images: data.images,
+      rating: data.rating ?? 0,
+    });
+    return NextResponse.json({ product }, { status: 201 });
   }
 }
