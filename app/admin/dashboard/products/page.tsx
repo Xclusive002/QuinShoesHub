@@ -42,6 +42,7 @@ export default function AdminProductsPage() {
   const [form, setForm] = useState(emptyForm);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [mainImageIndex, setMainImageIndex] = useState(0);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const fetchProducts = async () => {
     try {
@@ -82,10 +83,27 @@ export default function AdminProductsPage() {
     setForm(emptyForm);
     setImageUrls([]);
     setMainImageIndex(0);
+    setFormError(null);
     setShowAddForm(true);
   };
 
   const openEdit = (product: ProductRow) => {
+    const productImages = Array.isArray(product.images) ? product.images.filter(Boolean) : [];
+    setEditingId(product.id);
+    setForm({
+      name: product.name,
+      description: product.description,
+      price: String(product.price),
+      stock: String(product.stock),
+      categoryId: product.categoryId ?? '',
+      sku: '',
+      status: product.status ?? 'PUBLISHED',
+    });
+    setImageUrls(productImages);
+    setMainImageIndex(0);
+    setFormError(null);
+    setShowAddForm(true);
+  };
     const productImages = Array.isArray(product.images) ? product.images.filter(Boolean) : [];
     setEditingId(product.id);
     setForm({
@@ -161,19 +179,24 @@ export default function AdminProductsPage() {
     try {
       const url = editingId ? `/api/admin/products/${editingId}` : '/api/admin/products';
       const method = editingId ? 'PATCH' : 'POST';
-      await fetch(url, {
+      const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result?.error || 'Unable to save product');
+      }
       setShowAddForm(false);
       setForm(emptyForm);
       setEditingId(null);
       setImageUrls([]);
+      setFormError(null);
       await fetchProducts();
       window.dispatchEvent(new Event('quinn-products-updated'));
-    } catch {
-      // keep the form visible on failure
+    } catch (error) {
+      setFormError((error as Error).message ?? 'Unable to save product');
     }
   };
 
@@ -268,7 +291,12 @@ export default function AdminProductsPage() {
               onChange={handleImageUpload}
               className="block w-full text-sm text-muted-foreground"
             />
-            {imageUrls.length > 0 && (
+            {formError ? (
+            <div className="rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700">
+              {formError}
+            </div>
+          ) : null}
+          {imageUrls.length > 0 && (
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                 {imageUrls.map((image, index) => (
                   <div key={`${image}-${index}`} className="rounded-xl border border-border p-2">
