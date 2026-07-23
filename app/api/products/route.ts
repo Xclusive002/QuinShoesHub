@@ -3,41 +3,6 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { Prisma, ProductStatus } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
-import { fallbackStore } from '@/lib/fallback-store';
-
-const fallbackProducts = [
-  {
-    id: '1',
-    name: 'The Essential Low Top',
-    description: 'Minimalist low-top sneaker crafted from premium leather with a memory foam insole for all-day comfort.',
-    price: 189,
-    category: 'sneakers',
-    sizes: [6, 7, 8, 9, 10, 11, 12, 13],
-    colors: ['White', 'Black', 'Navy'],
-    image: '/images/logo.png',
-    images: ['/images/logo.png'],
-    stock: 45,
-    rating: 4.8,
-  },
-  {
-    id: '2',
-    name: 'Oxford Heritage',
-    description: 'Classic oxford in full-grain leather. Perfect for the office or formal occasions.',
-    price: 349,
-    category: 'formal',
-    sizes: [6, 7, 8, 9, 10, 11, 12, 13],
-    colors: ['Black', 'Brown', 'Tan'],
-    image: '/images/logo.png',
-    images: ['/images/logo.png'],
-    stock: 28,
-    rating: 4.9,
-  },
-];
-
-const fallbackCategories = [
-  { id: 'sneakers', name: 'Sneakers', slug: 'sneakers', image: null, productCount: 1 },
-  { id: 'formal', name: 'Formal', slug: 'formal', image: null, productCount: 1 },
-];
 
 function toProductShape(product: any) {
   return {
@@ -98,17 +63,7 @@ export async function GET(request: Request) {
       categories: categories.map(toCategoryShape),
     });
   } catch (error) {
-    return NextResponse.json({
-      products: fallbackStore.getProducts(search, categorySlug).map((product) => ({
-        ...product,
-        category: product.category?.slug ?? product.categoryId ?? 'uncategorized',
-        image: product.images?.[0] ?? '/images/logo.png',
-        images: product.images?.length ? product.images : ['/images/logo.png'],
-      })),
-      categories: fallbackStore.getCategories().map((category) => ({
-        ...category,
-        productCount: 0,
-      })),
-    });
+    console.error('Public products fetch failed', error);
+    return NextResponse.json({ products: [], categories: [] });
   }
 }

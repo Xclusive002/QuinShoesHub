@@ -61,12 +61,9 @@ export async function GET() {
     }
 
     const users = Object.values(mergedUsers);
-    if (users.length > 0) {
-      return NextResponse.json({ users });
-    }
+    return NextResponse.json({ users });
   } catch (error) {
     console.error('Admin users fetch failed', error);
+    return NextResponse.json({ users: fallbackStore.getUsers() });
   }
-
-  return NextResponse.json({ users: fallbackStore.getUsers() });
 }

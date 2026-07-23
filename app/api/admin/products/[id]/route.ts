@@ -3,7 +3,6 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
-import { fallbackStore } from '@/lib/fallback-store';
 
 const productSchema = z.object({
   name: z.string().min(1).optional(),
@@ -47,15 +46,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
 
     return NextResponse.json({ product });
   } catch (error) {
-    const params = await context.params;
-    const fallbackProduct = fallbackStore.updateProduct(params.id, {
-      name: 'Updated product',
-      description: 'Fallback updated product',
-      price: 0,
-      stock: 0,
-    });
-
-    return NextResponse.json({ product: fallbackProduct });
+    return NextResponse.json({ error: 'Unable to update product' }, { status: 500 });
   }
 }
 
@@ -69,8 +60,7 @@ export async function DELETE(_request: Request, context: { params: Promise<{ id:
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    const params = await context.params;
-    fallbackStore.deleteProduct(params.id);
-    return NextResponse.json({ ok: true });
+    console.error('Failed to delete product', error);
+    return NextResponse.json({ error: 'Unable to delete product' }, { status: 500 });
   }
 }

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
-import { fallbackStore } from '@/lib/fallback-store';
 
 const productSchema = z.object({
   name: z.string().min(1),
@@ -26,8 +25,9 @@ export async function GET() {
     });
 
     return NextResponse.json({ products });
-  } catch {
-    return NextResponse.json({ products: fallbackStore.getProducts() });
+  } catch (error) {
+    console.error('Admin products fetch failed', error);
+    return NextResponse.json({ products: [] });
   }
 }
 
@@ -56,20 +56,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ product }, { status: 201 });
   } catch (error) {
-    const fallbackProduct = fallbackStore.createProduct({
-      name: 'Untitled product',
-      description: 'Fallback product',
-      price: 0,
-      categoryId: null,
-      stock: 0,
-      sku: null,
-      status: 'DRAFT',
-      sizes: [],
-      colors: [],
-      images: ['/images/logo.png'],
-      rating: 0,
-    });
-
-    return NextResponse.json({ product: fallbackProduct }, { status: 201 });
+    console.error('Failed to create product', error);
+    return NextResponse.json({ error: 'Unable to create product' }, { status: 500 });
   }
 }
