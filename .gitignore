@@ -11,15 +11,12 @@ __v0_jsx-dev-runtime.ts
 .env*.local
 
 # Database
-prisma/**/*.db
-prisma/**/*.db-journal
-prisma/prisma/dev.db
-
-# Archives
-quinn-shoes-hub.zip
+prisma/*.db
+prisma/*.db-journal
 
 # Common ignores
 node_modules
 .next/
 .data/
-.DS_Store
+.DS_Storeprisma/prisma/dev.db
+quinn-shoes-hub.zip
