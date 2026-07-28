@@ -8,10 +8,10 @@ export const metadata: Metadata = {
   generator: 'v0.app',
   icons: {
     icon: {
-      url: '/icon.svg',
-      type: 'image/svg+xml',
+      url: '/images/logo.png',
+      type: 'image/png',
     },
-    apple: '/icon.svg',
+    apple: '/images/logo.png',
   },
 }
 
