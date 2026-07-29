@@ -7,7 +7,7 @@ const categorySchema = z.object({
   name: z.string().min(1),
   slug: z.string().min(1),
   description: z.string().optional(),
-  image: z.string().optional(),
+  image: z.string().nullable().optional(),
   parentId: z.string().optional(),
   sortOrder: z.number().int().optional(),
 });
