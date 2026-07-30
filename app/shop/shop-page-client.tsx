@@ -35,7 +35,7 @@ export function ShopPageClient() {
           if (isMounted) {
             setProducts([]);
           }
-        });
+        })
         .finally(() => {
           if (isMounted) {
             setIsLoading(false);
