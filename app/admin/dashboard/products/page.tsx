@@ -3,6 +3,7 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
 import { Edit2, Trash2, Plus } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
+import { LoadingButton } from '@/components/loading-button';
 
 interface CategoryOption {
   id: string;
@@ -43,6 +44,7 @@ export default function AdminProductsPage() {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchProducts = async () => {
     try {
@@ -142,6 +144,7 @@ export default function AdminProductsPage() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setIsSubmitting(true);
 
     const normalizedImages = imageUrls.filter(Boolean);
     const orderedImages = normalizedImages.length > 1 && mainImageIndex > 0 && mainImageIndex < normalizedImages.length
@@ -182,6 +185,8 @@ export default function AdminProductsPage() {
       window.dispatchEvent(new Event('quinn-products-updated'));
     } catch (error) {
       setFormError((error as Error).message ?? 'Unable to save product');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -317,9 +322,14 @@ export default function AdminProductsPage() {
             )}
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="bg-foreground text-background px-6 py-2 font-medium hover:opacity-80 transition-opacity text-sm">
-              Save Product
-            </button>
+            <LoadingButton
+              type="submit"
+              loading={isSubmitting}
+              loadingText={editingId ? 'Updating...' : 'Adding product...'}
+              className="bg-foreground text-background px-6 py-2 font-medium hover:opacity-80 transition-opacity text-sm"
+            >
+              {editingId ? 'Update product' : 'Add product'}
+            </LoadingButton>
             <button
               type="button"
               onClick={() => setShowAddForm(false)}

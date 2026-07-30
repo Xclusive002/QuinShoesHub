@@ -6,6 +6,7 @@ import { Navigation } from '@/components/navigation';
 import { Footer } from '@/components/footer';
 import { Filters } from '@/components/filters';
 import { ProductCard } from '@/components/product-card';
+import { ProductGridSkeleton } from '@/components/skeleton';
 import type { Product } from '@/lib/products';
 import { ChevronDown } from 'lucide-react';
 
@@ -17,6 +18,7 @@ export function ShopPageClient() {
   const [sortBy, setSortBy] = useState(searchParams.get('sortBy') || 'newest');
   const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
@@ -32,6 +34,11 @@ export function ShopPageClient() {
         .catch(() => {
           if (isMounted) {
             setProducts([]);
+          }
+        });
+        .finally(() => {
+          if (isMounted) {
+            setIsLoading(false);
           }
         });
     };
@@ -132,7 +139,9 @@ export function ShopPageClient() {
                 </div>
               )}
 
-              {paginatedProducts.length > 0 ? (
+              {isLoading ? (
+                <ProductGridSkeleton />
+              ) : paginatedProducts.length > 0 ? (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                     {paginatedProducts.map((product) => (

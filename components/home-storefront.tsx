@@ -6,6 +6,7 @@ import { ArrowRight, BellRing, ShieldCheck, Sparkles, Truck, Warehouse } from 'l
 import { Navigation } from '@/components/navigation';
 import { Footer } from '@/components/footer';
 import { ProductCard } from '@/components/product-card';
+import { TreadDivider } from '@/components/tread-divider';
 
 interface ProductRecord {
   id: string;
@@ -47,6 +48,7 @@ export function HomeStorefront() {
   const [products, setProducts] = useState<ProductRecord[]>([]);
   const [categories, setCategories] = useState<CategoryRecord[]>([]);
   const [notifications, setNotifications] = useState<NotificationRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
@@ -65,6 +67,8 @@ export function HomeStorefront() {
         setProducts([]);
         setCategories([]);
         setNotifications([]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -103,19 +107,19 @@ export function HomeStorefront() {
 
         <section className="border-b border-border px-4 pb-16 pt-24 sm:px-6 sm:pb-20 sm:pt-32 lg:px-8">
           <div className="mx-auto max-w-7xl">
-            <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
+            <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
               <div className="max-w-2xl">
                 <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-                  Premium Quality Since Day One
+                  Designed for every step
                 </p>
-                <h1 className="mb-6 font-display text-4xl leading-[0.95] sm:text-5xl lg:text-7xl">
-                  Elevate your everyday walk with signature style.
+                <h1 className="mb-6 font-display text-4xl leading-[0.95] sm:text-5xl lg:text-6xl">
+                  Walk with confidence in footwear built for the modern edge.
                 </h1>
                 <p className="mb-8 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                  Discover refined footwear crafted for comfort, confidence, and timeless presence — from clean daily essentials to standout occasion pieces.
+                  Experience bold silhouettes, premium comfort, and refined finishes crafted for daily wear, special moments, and the spaces between.
                 </p>
                 <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                  <Link href="/shop" className="inline-flex items-center justify-center gap-2 bg-foreground px-6 py-3 font-medium text-background transition hover:opacity-80 sm:px-8">
+                  <Link href="/shop" className="inline-flex items-center justify-center gap-2 bg-foreground px-6 py-3 font-medium text-background transition hover:opacity-90 sm:px-8">
                     Shop now <ArrowRight className="h-4 w-4" />
                   </Link>
                   <Link href="#featured" className="inline-flex items-center justify-center gap-2 border border-foreground px-6 py-3 font-medium text-foreground transition hover:bg-foreground hover:text-background sm:px-8">
@@ -123,7 +127,7 @@ export function HomeStorefront() {
                   </Link>
                 </div>
                 <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                  {['Free shipping over ₦150,000', '30-day returns', 'Members get early access'].map((item) => (
+                  {['Free shipping over ₦150,000', '30-day returns', 'Member exclusives'].map((item) => (
                     <div key={item} className="rounded-2xl border border-border bg-secondary/70 px-4 py-3 text-sm text-muted-foreground">
                       {item}
                     </div>
@@ -132,27 +136,47 @@ export function HomeStorefront() {
               </div>
 
               <div className="relative overflow-hidden rounded-[2rem] border border-border bg-secondary/70 p-4 shadow-[0_30px_80px_-28px_rgba(0,0,0,0.25)] sm:p-6">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.55),_transparent_65%)]" />
-                <div className="relative">
-                  <div className="mb-6 flex items-center justify-between rounded-full border border-border bg-background/70 px-4 py-2 text-sm font-medium text-muted-foreground">
-                    <span className="flex items-center gap-2"><Warehouse className="h-4 w-4" /> Curated studio drops</span>
-                    <span>New in</span>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.35),_transparent_60%)]" />
+                <div className="relative flex h-full flex-col gap-6">
+                  <div className="flex items-center justify-between rounded-full border border-border bg-background/80 px-4 py-2 text-sm font-medium text-muted-foreground">
+                    <span className="flex items-center gap-2"><Warehouse className="h-4 w-4" /> New arrivals</span>
+                    <span className="rounded-full border border-border bg-foreground px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-background">Drop</span>
                   </div>
-                  <img src="/images/logo.png" alt="Quinn Shoes Hub" className="mx-auto h-56 w-full max-w-md object-contain sm:h-72" />
-                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                    {benefits.map((benefit) => {
-                      const Icon = benefit.icon;
-                      return (
-                        <div key={benefit.title} className="rounded-2xl border border-border bg-background/80 p-4">
-                          <Icon className="mb-2 h-4 w-4" />
-                          <p className="text-sm font-semibold text-foreground">{benefit.title}</p>
-                          <p className="mt-1 text-sm text-muted-foreground">{benefit.description}</p>
-                        </div>
-                      );
-                    })}
+
+                  <div className="relative overflow-hidden rounded-[1.75rem] border border-border bg-background/95 p-4 sm:p-6">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.45),transparent_55%)]" />
+                    <img
+                      src={featuredProducts[0]?.image ?? '/images/logo.png'}
+                      alt={featuredProducts[0]?.name ?? 'Featured product'}
+                      className="mx-auto h-72 w-full max-w-[360px] object-contain"
+                    />
+                    <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                      <span className="rounded-full border border-ember/50 bg-ember/10 px-3 py-1 font-medium text-ember">Best seller</span>
+                      <span className="rounded-full border border-border bg-background/80 px-3 py-1">Premium leather</span>
+                      <span className="rounded-full border border-border bg-background/80 px-3 py-1">Easy returns</span>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-3xl border border-border bg-background/80 px-4 py-4 text-center">
+                      <p className="text-sm uppercase tracking-[0.25em] text-muted-foreground">Made to last</p>
+                      <p className="mt-2 text-xl font-semibold text-foreground">Durable build</p>
+                    </div>
+                    <div className="rounded-3xl border border-border bg-background/80 px-4 py-4 text-center">
+                      <p className="text-sm uppercase tracking-[0.25em] text-muted-foreground">Fast delivery</p>
+                      <p className="mt-2 text-xl font-semibold text-foreground">Across Nigeria</p>
+                    </div>
+                    <div className="rounded-3xl border border-border bg-background/80 px-4 py-4 text-center">
+                      <p className="text-sm uppercase tracking-[0.25em] text-muted-foreground">Shop with ease</p>
+                      <p className="mt-2 text-xl font-semibold text-foreground">Secure checkout</p>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
+
+            <div className="mt-12">
+              <TreadDivider className="mx-auto h-[2px] w-40" />
             </div>
           </div>
         </section>
@@ -181,7 +205,21 @@ export function HomeStorefront() {
               </Link>
             </div>
 
-            {featuredProducts.length > 0 ? (
+            {isLoading ? (
+              <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div key={index} className="animate-pulse overflow-hidden rounded-sm border border-border bg-card">
+                    <div className="aspect-square bg-muted" />
+                    <div className="space-y-3 px-5 pb-5 pt-4">
+                      <div className="h-3 w-20 rounded bg-muted" />
+                      <div className="h-4 w-3/4 rounded bg-muted" />
+                      <div className="h-3 w-full rounded bg-muted" />
+                      <div className="h-6 w-1/3 rounded bg-muted" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : featuredProducts.length > 0 ? (
               <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
                 {featuredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
