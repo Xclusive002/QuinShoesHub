@@ -79,7 +79,7 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-[1.75rem] border border-border bg-background shadow-[0_20px_60px_-24px_rgba(0,0,0,0.25)]">
+    <div className="group relative overflow-hidden rounded-[1.75rem] border border-border bg-background shadow-[0_20px_60px_-24px_rgba(0,0,0,0.25)] tread-frame">
       <div className="absolute right-3 top-3 z-10 flex gap-2">
         <button
           onClick={() => handleAction('wishlist')}
@@ -124,7 +124,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
           <div className="flex flex-col gap-3 border-t border-border pt-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="font-display text-xl font-bold">{formatCurrency(product.price)}</p>
+              <p className="font-mono text-lg font-medium text-ember">{formatCurrency(product.price)}</p>
               <p className="text-xs text-muted-foreground">{product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}</p>
             </div>
             <button
