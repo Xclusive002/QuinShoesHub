@@ -52,18 +52,31 @@ export default function CartPage() {
   const shipping = subtotal > 150000 ? 0 : 15000;
   const total = subtotal + shipping;
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!isMember) {
       setIsAuthOpen(true);
       return;
     }
 
-    const orders = getOrders();
-    const newOrder = createOrderFromCart(cartItems, total);
-    saveOrders([newOrder, ...orders]);
-    setCartItems([]);
-    setCheckoutNotice(`Order ${newOrder.orderNumber} placed successfully.`);
-    window.dispatchEvent(new Event('quinn-auth-changed'));
+    const profile = readMemberProfile();
+    const res = await fetch('/api/checkout/initialize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items: cartItems,
+        total,
+        email: profile?.email,
+        name: profile?.fullName,
+        phone: profile?.phone,
+        address: profile?.address,
+      }),
+    });
+    const data = await res.json();
+    if (data.authorizationUrl) {
+      window.location.href = data.authorizationUrl;
+    } else {
+      setCheckoutNotice('Could not start checkout. Please try again.');
+    }
   };
 
   return (

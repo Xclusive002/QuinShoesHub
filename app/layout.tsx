@@ -7,10 +7,8 @@ export const metadata: Metadata = {
   description: 'Premium handcrafted shoes for the discerning individual. Shop Quinn Shoes Hub.',
   generator: 'v0.app',
   icons: {
-    icon: {
-      url: '/images/logo.png',
-      type: 'image/png',
-    },
+    icon: '/images/logo.png',
+    shortcut: '/images/logo.png',
     apple: '/images/logo.png',
   },
 }

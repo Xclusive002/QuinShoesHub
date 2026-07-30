@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { prisma } from '@/lib/prisma';
+import { fallbackStore } from '@/lib/fallback-store';
+
+async function getPrisma() {
+  try {
+    const module = await import('@/lib/prisma');
+    return module.prisma;
+  } catch (error) {
+    console.error('Prisma client unavailable, using fallback store', error);
+    return null;
+  }
+}
 
 const productSchema = z.object({
   name: z.string().min(1),
@@ -62,6 +72,12 @@ function toAdminProductShape(product: any) {
 }
 
 export async function GET() {
+  const prisma = await getPrisma();
+
+  if (!prisma) {
+    return NextResponse.json({ products: fallbackStore.getProducts() });
+  }
+
   try {
     const products = await prisma.product.findMany({
       include: { category: true },
@@ -70,8 +86,8 @@ export async function GET() {
 
     return NextResponse.json({ products: products.map(toAdminProductShape) });
   } catch (error) {
-    console.error('Admin products fetch failed', error);
-    return NextResponse.json({ products: [] });
+    console.error('Admin products fetch failed, falling back to local store', error);
+    return NextResponse.json({ products: fallbackStore.getProducts() });
   }
 }
 
@@ -85,8 +101,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid product payload' }, { status: 400 });
   }
 
+  const normalizedData = normalizeProductPayload(data);
+
   try {
-    const normalizedData = normalizeProductPayload(data);
+    const prisma = await getPrisma();
+
+    if (!prisma) {
+      throw new Error('Prisma client unavailable');
+    }
+
     const product = await prisma.product.create({
       data: {
         name: normalizedData.name,
@@ -107,7 +130,26 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ product: toAdminProductShape(product) }, { status: 201 });
   } catch (error) {
-    console.error('Failed to create product', error);
-    return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
+    console.error('Failed to create product, falling back to local store', error);
+
+    const product = fallbackStore.createProduct({
+      name: normalizedData.name,
+      description: normalizedData.description,
+      price: normalizedData.price,
+      compareAtPrice: normalizedData.compareAtPrice ?? null,
+      categoryId: normalizedData.categoryId ?? null,
+      category: normalizedData.categoryId
+        ? fallbackStore.getCategories().find((category) => category.id === normalizedData.categoryId) ?? null
+        : null,
+      stock: normalizedData.stock,
+      sku: normalizedData.sku ?? null,
+      status: (normalizedData.status as any) ?? 'DRAFT',
+      sizes: normalizedData.sizes,
+      colors: normalizedData.colors,
+      images: normalizedData.images,
+      rating: normalizedData.rating ?? 0,
+    });
+
+    return NextResponse.json({ product: toAdminProductShape(product) }, { status: 201 });
   }
 }

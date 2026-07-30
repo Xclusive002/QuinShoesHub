@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { fallbackStore } from '@/lib/fallback-store';
 
 const productSchema = z.object({
   name: z.string().min(1).optional(),
@@ -66,7 +67,13 @@ function toAdminProductShape(product: any) {
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   const params = await context.params;
   const body = await request.json();
-  const data = productSchema.parse(body);
+  let data;
+
+  try {
+    data = productSchema.parse(body);
+  } catch (error) {
+    return NextResponse.json({ error: 'Invalid product payload' }, { status: 400 });
+  }
 
   try {
     const normalizedData = normalizeProductPayload(data);
@@ -102,7 +109,21 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
 
     return NextResponse.json({ product: toAdminProductShape(product) });
   } catch (error) {
-    console.error('Failed to update product', error);
+    console.error('Failed to update product, falling back to local store', error);
+
+    const normalizedData = normalizeProductPayload(data);
+
+    const product = fallbackStore.updateProduct(params.id, {
+      ...normalizedData,
+      sizes: serializeJsonStringArray(normalizedData.sizes),
+      colors: serializeJsonStringArray(normalizedData.colors),
+      images: serializeJsonStringArray(normalizedData.images),
+    });
+
+    if (product) {
+      return NextResponse.json({ product: toAdminProductShape(product) });
+    }
+
     return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
   }
 }
@@ -117,7 +138,9 @@ export async function DELETE(_request: Request, context: { params: Promise<{ id:
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error('Failed to delete product', error);
-    return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
+    console.error('Failed to delete product, falling back to local store', error);
+    const params = await context.params;
+    fallbackStore.deleteProduct(params.id);
+    return NextResponse.json({ ok: true });
   }
 }

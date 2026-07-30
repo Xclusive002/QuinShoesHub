@@ -22,7 +22,6 @@ export default function AccountPage() {
     const currentProfile = readMemberProfile();
     setProfile(currentProfile);
     setWishlist(getWishlist());
-    setOrders(getOrders());
     if (currentProfile) {
       setDraft({
         fullName: currentProfile.fullName ?? '',
@@ -40,6 +39,19 @@ export default function AccountPage() {
     window.addEventListener('quinn-auth-changed', onChange);
     return () => window.removeEventListener('quinn-auth-changed', onChange);
   }, []);
+
+  useEffect(() => {
+    if (!profile?.email) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/orders?email=${encodeURIComponent(profile.email)}`);
+        const json = await res.json();
+        setOrders(json?.orders ?? getOrders());
+      } catch {
+        setOrders(getOrders());
+      }
+    })();
+  }, [profile]);
 
   // Only show auth modal on mount if no profile exists
   useEffect(() => {
