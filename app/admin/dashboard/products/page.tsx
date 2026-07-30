@@ -274,19 +274,31 @@ export default function AdminProductsPage() {
           </div>
           <div className="space-y-3">
             <label className="block text-sm font-medium">Product images</label>
+            <div className="flex flex-wrap items-center gap-3">
+              <label
+                htmlFor="product-images"
+                className="inline-flex cursor-pointer items-center justify-center rounded-full border border-border bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:bg-ember/90"
+              >
+                Choose files
+              </label>
+              <span className="text-sm text-muted-foreground">
+                {imageUrls.length} image{imageUrls.length === 1 ? '' : 's'} selected
+              </span>
+            </div>
             <input
+              id="product-images"
               type="file"
               accept="image/*"
               multiple
               onChange={handleImageUpload}
-              className="block w-full text-sm text-muted-foreground"
+              className="sr-only"
             />
             {formError ? (
-            <div className="rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700">
-              {formError}
-            </div>
-          ) : null}
-          {imageUrls.length > 0 && (
+              <div className="rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700">
+                {formError}
+              </div>
+            ) : null}
+            {imageUrls.length > 0 && (
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                 {imageUrls.map((image, index) => (
                   <div key={`${image}-${index}`} className="rounded-xl border border-border p-2">
